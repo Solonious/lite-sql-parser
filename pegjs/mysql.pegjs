@@ -436,7 +436,7 @@ create_index_stmt
     i:ident __
     KW_ON __
     t:table_ref_list __
-    c:column_ref_list {
+    LPAREN __ head:ident_name tail:(__ COMMA __ ident_name)* __ RPAREN {
       return {
             tableList: Array.from(tableList),
             columnList: columnListTableAlias(columnList),
@@ -444,7 +444,7 @@ create_index_stmt
               type: 'create',
               keyword: 'index',
               table: t,
-              create_definitions: c
+              column: head
               }
             };
           }
