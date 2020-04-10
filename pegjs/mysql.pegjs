@@ -209,6 +209,7 @@ cmd_stmt
 
 create_stmt
   = create_table_stmt
+  / create_index_stmt
 
 alter_stmt
   = alter_table_stmt
@@ -428,6 +429,26 @@ use_stmt
         }
       };
     }
+
+create_index_stmt
+  = KW_CREATE __
+    KW_INDEX __
+    i:ident __
+    KW_ON __
+    t:table_ref_list __
+    c:create_table_definition {
+      if (i && t.length > 0) t.forEach(table => tableList.add(`alter::${table.db}::${table.table}`));
+      return {
+            tableList: Array.from(tableList),
+            columnList: columnListTableAlias(columnList),
+            ast: {
+              type: 'create',
+              keyword: 'index',
+              table: t,
+              create_definitions: c
+              }
+            };
+          }
 
 alter_table_stmt
   = KW_ALTER  __
