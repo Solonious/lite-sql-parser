@@ -436,7 +436,7 @@ create_index_stmt
     i:ident __
     KW_ON __
     t:table_ref_list __
-    c:create_column_definition {
+    c:column_ref_list {
       return {
             tableList: Array.from(tableList),
             columnList: columnListTableAlias(columnList),
