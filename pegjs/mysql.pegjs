@@ -436,8 +436,7 @@ create_index_stmt
     i:ident __
     KW_ON __
     t:table_ref_list __
-    c:create_table_definition {
-      if (i && t.length > 0) t.forEach(table => tableList.add(`alter::${table.db}::${table.table}`));
+    c:create_column_definition {
       return {
             tableList: Array.from(tableList),
             columnList: columnListTableAlias(columnList),
