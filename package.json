@@ -1,0 +1,79 @@
+{
+  "name": "sql-parser-2",
+  "version": "1.8.2",
+  "description": "simple node sql parser",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "scripts": {
+    "build": "rm -rf build/* && mkdir -p build && node build.js && npm run compile",
+    "test": "NODE_ENV=test npm run lint && mocha --recursive --require @babel/register",
+    "compile": "babel src -d lib",
+    "browser": "browserify -p tinyify index.js -o umd/parser.min.js",
+    "lint": "npm run build && eslint src/",
+    "prepublishOnly": "npm run build && npm run browser",
+    "coverLocal": "nyc npm run test",
+    "cover": "nyc npm run test && nyc report --reporter=text-lcov | coveralls"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/taozhi8833998/node-sql-parser.git"
+  },
+  "pre-commit": "test",
+  "keywords": [
+    "sql",
+    "sql-parser",
+    "parser",
+    "node",
+    "nodejs",
+    "node-parser",
+    "node-sql-parser",
+    "ast",
+    "sql-ast"
+  ],
+  "author": "taozhi8833998 <taozhi8833998@163.com>",
+  "files": [
+    "index.js",
+    "lib/",
+    "index.d.ts",
+    "build/",
+    "umd/",
+    "README.md",
+    "LICENSE"
+  ],
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/taozhi8833998/node-sql-parser/issues"
+  },
+  "homepage": "https://github.com/taozhi8833998/node-sql-parser#readme",
+  "engines": {
+    "node": ">=8"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.5.5",
+    "@babel/core": "^7.5.5",
+    "@babel/plugin-proposal-object-rest-spread": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "@babel/register": "^7.5.5",
+    "@types/chai": "^4.1.7",
+    "@types/mocha": "^7.0.1",
+    "browserify": "^16.5.1",
+    "chai": "^4.2.0",
+    "coveralls": "3.0.9",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-config-strict": "^14.0.1",
+    "eslint-plugin-filenames": "^1.3.2",
+    "eslint-plugin-import": "^2.16.0",
+    "mocha": "^7.1.1",
+    "nyc": "15.0.1",
+    "pegjs": "^0.10.0",
+    "pre-commit": "^1.2.2",
+    "tinyify": "^2.5.2"
+  },
+  "dependencies": {
+    "big-integer": "^1.6.48"
+  },
+  "directories": {
+    "test": "test"
+  }
+}
