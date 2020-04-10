@@ -436,13 +436,14 @@ create_index_stmt
     i:ident __
     KW_ON __
     t:table_ref_list __
-    c:literal_list {
+    c:ident_list {
       return {
             tableList: Array.from(tableList),
             columnList: columnListTableAlias(columnList),
             ast: {
               type: 'create',
               keyword: 'index',
+              index: i,
               table: t,
               column: c
               }
@@ -1099,6 +1100,11 @@ column_ref_list
   = head:column_ref tail:(__ COMMA __ column_ref)* {
       return createList(head, tail);
     }
+
+ident_list
+  = LPAREN __ head:ident tail:(__ COMMA __ ident)* __ RPAREN {
+    return createList(head, tail);
+  }
 
 having_clause
   = KW_HAVING __ e:expr { return e; }
