@@ -1737,7 +1737,7 @@ literal_string
     }
 
 literal_datetime
-  = type:(KW_TIME / KW_DATE / KW_TIMESTAMP) __ ca:("'" single_char* "'") {
+  = type:(KW_TIME / KW_DATE  / KW_DATETIME / KW_TIMESTAMP) __ ca:("'" single_char* "'") {
       return {
         type: type.toLowerCase(),
         value: ca[1].join('')
@@ -1948,7 +1948,7 @@ KW_BIGINT   = "BIGINT"i   !ident_start { return 'BIGINT'; }
 KW_FLOAT   = "FLOAT"i   !ident_start { return 'FLOAT'; }
 KW_DOUBLE   = "DOUBLE"i   !ident_start { return 'DOUBLE'; }
 KW_DATE     = "DATE"i     !ident_start { return 'DATE'; }
-KW_DATETIME = "DATETIME"  !ident_start { return 'DATETIME' }
+KW_DATETIME = "DATETIME"i  !ident_start { return 'DATETIME;' }
 KW_TIME     = "TIME"i     !ident_start { return 'TIME'; }
 KW_TIMESTAMP= "TIMESTAMP"i!ident_start { return 'TIMESTAMP'; }
 KW_TRUNCATE = "TRUNCATE"i !ident_start { return 'TRUNCATE'; }
