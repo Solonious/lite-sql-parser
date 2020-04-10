@@ -41,7 +41,6 @@
     'INNER': true,
     'INSERT': true,
     'INTO': true,
-    'INDEX': true,
     'IS': true,
 
     'JOIN': true,
@@ -379,6 +378,7 @@ storage
     }
   }
 default_expr
+  = KW_DEFAULT __ ce: (literal / expr) {
     return {
       type: 'default',
       value: ce
@@ -1737,7 +1737,7 @@ literal_string
     }
 
 literal_datetime
-  = type:(KW_TIME / KW_DATE / KW_TIMESTAMP / KW_DATETIME) __ ca:("'" single_char* "'") {
+  = type:(KW_TIME / KW_DATE / KW_TIMESTAMP) __ ca:("'" single_char* "'") {
       return {
         type: type.toLowerCase(),
         value: ca[1].join('')
