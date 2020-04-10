@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/node-sql-parser.iml" filepath="$PROJECT_DIR$/.idea/node-sql-parser.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../lite-ui-sql-parser/.idea/node-sql-parser.iml" filepath="$PROJECT_DIR$/../lite-ui-sql-parser/.idea/node-sql-parser.iml" />
     </modules>
   </component>
 </project>

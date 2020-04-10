@@ -92,7 +92,7 @@ Import the JS file in your page:
 ### Create AST for SQL statement
 
 ```javascript
-const { Parser } = require('node-sql-parser');
+const { Parser } = require('lite-ui-sql-parser');
 const parser = new Parser();
 const ast = parser.astify('SELECT * FROM t'); // mysql sql grammer parsed by default
 
@@ -129,7 +129,7 @@ console.log(ast);
 const opt = {
   database: 'MySQL' // MySQL is the default database
 }
-const { Parser } = require('node-sql-parser');
+const { Parser } = require('lite-ui-sql-parser');
 const parser = new Parser()
 // opt is optional
 const ast = parser.astify('SELECT * FROM t', opt);
@@ -144,7 +144,7 @@ console.log(sql); // SELECT * FROM `t`
 const opt = {
   database: 'MariaDB' // MySQL is the default database
 }
-const { Parser } = require('node-sql-parser');
+const { Parser } = require('lite-ui-sql-parser');
 const parser = new Parser()
 // opt is optional
 const { tableList, columnList, ast } = parser.parse('SELECT * FROM t', opt);
@@ -159,7 +159,7 @@ const { tableList, columnList, ast } = parser.parse('SELECT * FROM t', opt);
 const opt = {
   database: 'MySQL'
 }
-const { Parser } = require('node-sql-parser');
+const { Parser } = require('lite-ui-sql-parser');
 const parser = new Parser();
 // opt is optional
 const tableList = parser.tableList('SELECT * FROM t', opt);
@@ -177,7 +177,7 @@ console.log(tableList); // ["select::null::t"]
 const opt = {
   database: 'MySQL'
 }
-const { Parser } = require('node-sql-parser');
+const { Parser } = require('lite-ui-sql-parser');
 const parser = new Parser();
 // opt is optional
 const columnList = parser.columnList('SELECT t.id FROM t', opt);
@@ -191,7 +191,7 @@ console.log(columnList); // ["select::t::id"]
 - `whiteListCheck` function check on `table` mode and `MySQL` database by default
 
 ```javascript
-const { Parser } = require('node-sql-parser');
+const { Parser } = require('lite-ui-sql-parser');
 const parser = new Parser();
 const sql = 'UPDATE a SET id = 1 WHERE name IN (SELECT name FROM b)'
 const whiteTableList = ['(select|update)::(.*)::(a|b)'] // array that contain multiple authorities
@@ -206,7 +206,7 @@ parser.whiteListCheck(sql, whiteTableList, opt) // if check failed, an error wou
 - check column authority
 
 ```javascript
-const { Parser } = require('node-sql-parser');
+const { Parser } = require('lite-ui-sql-parser');
 const parser = new Parser();
 const sql = 'UPDATE a SET id = 1 WHERE name IN (SELECT name FROM b)'
 const whiteColumnList = ['select::null::name', 'update::a::id'] // array that contain multiple authorities
