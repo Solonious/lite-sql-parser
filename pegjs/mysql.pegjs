@@ -13,6 +13,8 @@
     'CALL': true,
     'CASE': true,
     'CREATE': true,
+    'CHANGE': true,
+    'MODIFY': true,
     'CONTAINS': true,
     'CURRENT_DATE': true,
     'CURRENT_TIME': true,
@@ -330,12 +332,13 @@ create_definition
 create_column_definition
   = c:column_ref __
     d:data_type __
-    n:(literal_not_null / literal_null)? __
-    df:default_expr? __
     a:('AUTO_INCREMENT'i)? __
     u:(('UNIQUE'i / 'PRIMARY'i)? __ 'KEY'i)? __
+    cs:char_set_expr? __
     co:keyword_comment? __
     ca:collate_expr? __
+    n:(literal_not_null / literal_null)? __
+    df:default_expr? __
     cf:column_format? __
     s:storage? __
     re:reference_definition? __ {
@@ -349,6 +352,72 @@ create_column_definition
         auto_increment: a && a.toLowerCase(),
         unique_or_primary: u && `${u[0].toLowerCase()} ${u[2].toLowerCase()}`,
         comment: co,
+        char_set: cs,
+        collate: ca,
+        column_format: cf,
+        storage:s,
+        reference_definition: re,
+        resource: 'column'
+      }
+    }
+
+change_column_definition
+  = c:column_ref __
+    cn: column_ref __
+    d:data_type __
+    a:('AUTO_INCREMENT'i)? __
+    u:(('UNIQUE'i / 'PRIMARY'i)? __ 'KEY'i)? __
+    cs:char_set_expr? __
+    ca:collate_expr? __
+    n:(literal_not_null / literal_null)? __
+    df:default_expr? __
+    co:keyword_comment? __
+    cf:column_format? __
+    s:storage? __
+    re:reference_definition? __ {
+      columnList.add(`create::${c.table}::${c.column}`)
+      if (n && !n.value) n.value = 'null'
+      return {
+        column: [c,cn],
+        definition: d,
+        nullable: n,
+        default_val: df,
+        auto_increment: a && a.toLowerCase(),
+        unique_or_primary: u && `${u[0].toLowerCase()} ${u[2].toLowerCase()}`,
+        comment: co,
+        char_set: cs,
+        collate: ca,
+        column_format: cf,
+        storage:s,
+        reference_definition: re,
+        resource: 'column'
+      }
+    }
+
+modify_column_definition
+  = c:column_ref __
+    d:data_type __
+    a:('AUTO_INCREMENT'i)? __
+    u:(('UNIQUE'i / 'PRIMARY'i)? __ 'KEY'i)? __
+    cs:char_set_expr? __
+    ca:collate_expr? __
+    n:(literal_not_null / literal_null)? __
+    df:default_expr? __
+    co:keyword_comment? __
+    cf:column_format? __
+    s:storage? __
+    re:reference_definition? __ {
+      columnList.add(`create::${c.table}::${c.column}`)
+      if (n && !n.value) n.value = 'null'
+      return {
+        column: c,
+        definition: d,
+        nullable: n,
+        default_val: df,
+        auto_increment: a && a.toLowerCase(),
+        unique_or_primary: u && `${u[0].toLowerCase()} ${u[2].toLowerCase()}`,
+        comment: co,
+        char_set: cs,
         collate: ca,
         column_format: cf,
         storage:s,
@@ -361,6 +430,13 @@ collate_expr
   = KW_COLLATE __ ca:ident_name __ {
     return {
       type: 'collate',
+      value: ca,
+    }
+  }
+char_set_expr
+  = KW_CHAR_SET __ ca:ident_name __ {
+    return {
+      type: 'char set',
       value: ca,
     }
   }
@@ -475,6 +551,8 @@ alter_action_list
 alter_action
   = ALTER_ADD_COLUMN
   / ALTER_DROP_COLUMN
+  / ALTER_CHANGE_COLUMN
+  / ALTER_MODIFY_COLUMN
   / ALTER_ADD_INDEX_OR_KEY
   / ALTER_ADD_FULLETXT_SPARITAL_INDEX
   / ALTER_RENAME_TABLE
@@ -487,6 +565,32 @@ ALTER_ADD_COLUMN
     cd:create_column_definition {
       return {
         action: 'add',
+        ...cd,
+        keyword: kc,
+        resource: 'column',
+        type: 'alter',
+      }
+    }
+
+ALTER_CHANGE_COLUMN
+  = KW_CHANGE __
+    kc:KW_COLUMN? __
+    cd:change_column_definition __ {
+      return {
+        action: 'change',
+        ...cd,
+        keyword: kc,
+        resource: 'column',
+        type: 'alter',
+      }
+    }
+
+ALTER_MODIFY_COLUMN
+  = KW_MODIFY __
+    kc:KW_COLUMN? __
+    cd:modify_column_definition __ {
+      return {
+        action: 'modify',
         ...cd,
         keyword: kc,
         resource: 'column',
@@ -1872,6 +1976,8 @@ KW_FALSE    = "FALSE"i      !ident_start
 
 KW_SHOW     = "SHOW"i       !ident_start
 KW_DROP     = "DROP"i       !ident_start { return 'DROP'; }
+KW_CHANGE   = "CHANGE"i     !ident_start { return 'CHANGE'; }
+KW_MODIFY   = "MODIFY"i     !ident_start { return 'MODIFY'; }
 KW_USE      = "USE"i        !ident_start
 KW_ALTER    = "ALTER"i      !ident_start
 KW_SELECT   = "SELECT"i     !ident_start
@@ -1898,6 +2004,7 @@ KW_AS       = "AS"i         !ident_start
 KW_TABLE    = "TABLE"i      !ident_start { return 'TABLE'; }
 KW_TABLES   = "TABLES"i      !ident_start { return 'TABLES'; }
 KW_COLLATE  = "COLLATE"i    !ident_start { return 'COLLATE'; }
+KW_CHAR_SET = "CHARACTER SET"i !ident_start { return 'CHARACTER SET'; }
 
 KW_ON       = "ON"i       !ident_start
 KW_LEFT     = "LEFT"i     !ident_start
@@ -2014,6 +2121,7 @@ KW_DUAL = "DUAL"i
 
 // MySQL Alter
 KW_ADD     = "ADD"i     !ident_start { return 'ADD'; }
+KW_AFTER   = "AFTER"i   !ident_start { return 'AFTER'; }
 KW_COLUMN  = "COLUMN"i  !ident_start { return 'COLUMN'; }
 KW_INDEX   = "INDEX"i  !ident_start { return 'INDEX'; }
 KW_KEY     = "KEY"i  !ident_start { return 'KEY'; }
@@ -2072,12 +2180,14 @@ pound_sign_comment
   = "#" (!EOL char)*
 
 keyword_comment
-  = k:KW_COMMENT __ s:KW_ASSIGIN_EQUAL? __ c:literal_string {
+  = k:KW_COMMENT __ s:KW_ASSIGIN_EQUAL? __ v:literal_string __ ka:KW_AFTER? __ c:column_ref {
+    const col = c || null;
     return {
       type: k.toLowerCase(),
       keyword: k.toLowerCase(),
       symbol: s,
-      value: c,
+      value: v,
+      column: col,
     }
   }
 
