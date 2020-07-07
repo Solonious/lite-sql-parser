@@ -341,11 +341,13 @@ create_column_definition
     df:default_expr? __
     cf:column_format? __
     s:storage? __
-    re:reference_definition? __ {
+    re:reference_definition? __
+    af:('AFTER'i __ column_ref)? __ {
       columnList.add(`create::${c.table}::${c.column}`)
       if (n && !n.value) n.value = 'null'
       return {
         column: c,
+        after: af,
         definition: d,
         nullable: n,
         default_val: df,
@@ -2180,7 +2182,7 @@ pound_sign_comment
   = "#" (!EOL char)*
 
 keyword_comment
-  = k:KW_COMMENT __ s:KW_ASSIGIN_EQUAL? __ v:literal_string __ ka:KW_AFTER? __ c:column_ref {
+  = k:KW_COMMENT __ s:(KW_ASSIGIN_EQUAL / __ )? __ v:literal_string __ ka:KW_AFTER? __ c:column_ref {
     const col = c || null;
     return {
       type: k.toLowerCase(),
