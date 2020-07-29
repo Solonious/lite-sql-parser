@@ -332,22 +332,22 @@ create_definition
 create_column_definition
   = c:column_ref __
     d:data_type __
-    a:('AUTO_INCREMENT'i)? __
     u:(('UNIQUE'i / 'PRIMARY'i)? __ 'KEY'i)? __
     cs:char_set_expr? __
-    co:keyword_comment? __
     ca:collate_expr? __
     n:(literal_not_null / literal_null)? __
+    a:('AUTO_INCREMENT'i)? __
     df:default_expr? __
+    co:keyword_comment? __
     cf:column_format? __
     s:storage? __
     re:reference_definition? __
-    af:('AFTER'i __ column_ref)? __ {
+    ('AFTER'i)? __
+    column_ref? __ {
       columnList.add(`create::${c.table}::${c.column}`)
       if (n && !n.value) n.value = 'null'
       return {
         column: c,
-        after: af,
         definition: d,
         nullable: n,
         default_val: df,
@@ -367,16 +367,18 @@ change_column_definition
   = c:column_ref __
     cn: column_ref __
     d:data_type __
-    a:('AUTO_INCREMENT'i)? __
     u:(('UNIQUE'i / 'PRIMARY'i)? __ 'KEY'i)? __
     cs:char_set_expr? __
     ca:collate_expr? __
     n:(literal_not_null / literal_null)? __
+    a:('AUTO_INCREMENT'i)? __
     df:default_expr? __
     co:keyword_comment? __
     cf:column_format? __
     s:storage? __
-    re:reference_definition? __ {
+    re:reference_definition? __
+    ('AFTER'i)? __
+    column_ref? __ {
       columnList.add(`create::${c.table}::${c.column}`)
       if (n && !n.value) n.value = 'null'
       return {
@@ -399,16 +401,18 @@ change_column_definition
 modify_column_definition
   = c:column_ref __
     d:data_type __
-    a:('AUTO_INCREMENT'i)? __
     u:(('UNIQUE'i / 'PRIMARY'i)? __ 'KEY'i)? __
     cs:char_set_expr? __
     ca:collate_expr? __
     n:(literal_not_null / literal_null)? __
+    a:('AUTO_INCREMENT'i)? __
     df:default_expr? __
     co:keyword_comment? __
     cf:column_format? __
     s:storage? __
-    re:reference_definition? __ {
+    re:reference_definition? __
+    ('AFTER'i)? __
+    column_ref? __ {
       columnList.add(`create::${c.table}::${c.column}`)
       if (n && !n.value) n.value = 'null'
       return {
@@ -466,6 +470,7 @@ default_expr
 drop_stmt
   = a:KW_DROP __
     KW_TABLE __
+    b:KW_IF_EXISTS? __
     t:table_ref_list __ {
       if(t) t.forEach(tt => tableList.add(`${a}::${tt.db}::${tt.table}`));
       return {
@@ -473,7 +478,8 @@ drop_stmt
         columnList: columnListTableAlias(columnList),
         ast: {
           type: a.toLowerCase(),
-          table: t
+          table: t,
+          exists: b
         }
       };
     }
@@ -1987,6 +1993,7 @@ KW_UPDATE   = "UPDATE"i     !ident_start
 KW_CREATE   = "CREATE"i     !ident_start
 KW_TEMPORARY = "TEMPORARY"i !ident_start
 KW_IF_NOT_EXISTS = "IF NOT EXISTS"i !ident_start
+KW_IF_EXISTS  = "IF EXISTS"i !ident_start
 KW_DELETE   = "DELETE"i     !ident_start
 KW_INSERT   = "INSERT"i     !ident_start
 KW_RECURSIVE= "RECURSIVE"   !ident_start
@@ -2182,14 +2189,12 @@ pound_sign_comment
   = "#" (!EOL char)*
 
 keyword_comment
-  = k:KW_COMMENT __ s:(KW_ASSIGIN_EQUAL / __ )? __ v:literal_string __ ka:KW_AFTER? __ c:column_ref {
-    const col = c || null;
+  = k:KW_COMMENT __ s:(KW_ASSIGIN_EQUAL / __ )? __ v:literal_string __ {
     return {
       type: k.toLowerCase(),
       keyword: k.toLowerCase(),
       symbol: s,
       value: v,
-      column: col,
     }
   }
 
