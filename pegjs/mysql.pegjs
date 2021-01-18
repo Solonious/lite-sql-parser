@@ -28,6 +28,7 @@
 
     'ELSE': true,
     'END': true,
+    'ENUM': true,
     'EXISTS': true,
     'EXPLAIN': true,
 
@@ -2080,6 +2081,7 @@ KW_INT      = "INT"i      !ident_start { return 'INT'; }
 KW_ZEROFILL = "ZEROFILL"i !ident_start { return 'ZEROFILL'; }
 KW_INTEGER  = "INTEGER"i  !ident_start { return 'INTEGER'; }
 KW_JSON     = "JSON"i     !ident_start { return 'JSON'; }
+KW_ENUM     = "ENUM"i     !ident_start { return 'ENUM'; }
 KW_SMALLINT = "SMALLINT"i !ident_start { return 'SMALLINT'; }
 KW_TINYINT  = "TINYINT"i  !ident_start { return 'TINYINT'; }
 KW_TINYTEXT = "TINYTEXT"i !ident_start { return 'TINYTEXT'; }
@@ -2357,6 +2359,7 @@ data_type
   / datetime_type
   / json_type
   / text_type
+  / t:KW_ENUM __ l:value_list { return l; }
 
 character_string_type
   = t:(KW_CHAR / KW_VARCHAR) __ LPAREN __ l:[0-9]+ __ RPAREN __ {
