@@ -942,6 +942,7 @@ call_stmt
       }
     }
   }
+  / KW_CALL __ l:[a-zA-Z0-9]+ __
 
 select_stmt
   = select_stmt_nake
