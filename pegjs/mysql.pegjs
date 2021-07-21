@@ -581,6 +581,7 @@ alter_action_list
 
 alter_action
   = ALTER_ADD_COLUMN
+  / ALTER_DROP_INDEX
   / ALTER_DROP_COLUMN
   / ALTER_CHANGE_COLUMN
   / ALTER_MODIFY_COLUMN
@@ -632,6 +633,19 @@ ALTER_MODIFY_COLUMN
 ALTER_DROP_COLUMN
   = KW_DROP __
     kc:KW_COLUMN? __
+    c:column_ref __ {
+      return {
+        action: 'drop',
+        column: c,
+        keyword: kc,
+        resource: 'column',
+        type: 'alter',
+      }
+    }
+
+ALTER_DROP_INDEX
+  = KW_DROP __
+    kc:KW_INDEX? __
     c:column_ref __ {
       return {
         action: 'drop',
