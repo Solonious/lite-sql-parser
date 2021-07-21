@@ -468,6 +468,10 @@ default_expr
       value: ce
     }
   }
+drop_index_opt
+  = head:(ALTER_ALGORITHM / ALTER_LOCK) tail:(__ (ALTER_ALGORITHM / ALTER_LOCK))* {
+    return createList(head, tail, 1)
+  }
 drop_stmt
   = a:KW_DROP __
     KW_TABLE __
@@ -484,6 +488,24 @@ drop_stmt
         }
       };
     }
+    / a:KW_DROP __
+        r:KW_INDEX __
+        i:column_ref __
+        KW_ON __
+        t:table_name __
+        op:drop_index_opt? __ {
+          return {
+            tableList: Array.from(tableList),
+            columnList: columnListTableAlias(columnList),
+            ast: {
+              type: a.toLowerCase(),
+              keyword: r.toLowerCase(),
+              name: i,
+              table: t,
+              options: op
+            }
+          };
+        }
 
 truncate_stmt
   = a:KW_TRUNCATE  __
