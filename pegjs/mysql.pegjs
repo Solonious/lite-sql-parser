@@ -2429,3 +2429,6 @@ json_type
 
 text_type
   = t:(KW_TINYTEXT / KW_TEXT / KW_MEDIUMTEXT / KW_LONGTEXT) { return { dataType: t }}
+
+blob_type
+  = t:(KW_TINYBLOB / KW_BLOB / KW_MEDIUMBLOB / KW_LONGBLOB) { return { dataType: t }}
