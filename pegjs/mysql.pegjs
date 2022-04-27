@@ -2399,6 +2399,7 @@ data_type
   / datetime_type
   / json_type
   / text_type
+  / blob_type
   / t:KW_ENUM __ l:value_list { return l; }
 
 character_string_type
