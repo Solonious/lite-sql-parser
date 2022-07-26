@@ -96,7 +96,6 @@ function columnsToSQL(columns, tables) {
     .join(', ')
 }
 
-
 export {
   columnDefinitionToSQL,
   columnsToSQL,

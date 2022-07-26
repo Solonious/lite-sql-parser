@@ -2133,6 +2133,10 @@ KW_TIME     = "TIME"i     !ident_start { return 'TIME'; }
 KW_TIMESTAMP= "TIMESTAMP"i!ident_start { return 'TIMESTAMP'; }
 KW_TRUNCATE = "TRUNCATE"i !ident_start { return 'TRUNCATE'; }
 KW_USER     = "USER"i     !ident_start { return 'USER'; }
+KW_TINYBLOB     = "TINYBLOB"i     !ident_start { return 'TINYBLOB'; }
+KW_BLOB     = "BLOB"i     !ident_start { return 'BLOB'; }
+KW_MEDIUMBLOB     = "MEDIUMBLOB"i     !ident_start { return 'MEDIUMBLOB'; }
+KW_LONGBLOB     = "LONGBLOB"i     !ident_start { return 'LONGBLOB'; }
 
 KW_CURRENT_DATE     = "CURRENT_DATE"i !ident_start { return 'CURRENT_DATE'; }
 KW_ADD_DATE         = "ADDDATE"i !ident_start { return 'ADDDATE'; }
@@ -2395,6 +2399,7 @@ data_type
   / datetime_type
   / json_type
   / text_type
+  / blob_type
   / t:KW_ENUM __ l:value_list { return l; }
 
 character_string_type
@@ -2425,3 +2430,6 @@ json_type
 
 text_type
   = t:(KW_TINYTEXT / KW_TEXT / KW_MEDIUMTEXT / KW_LONGTEXT) { return { dataType: t }}
+
+blob_type
+  = t:(KW_TINYBLOB / KW_BLOB / KW_MEDIUMBLOB / KW_LONGBLOB) { return { dataType: t }}

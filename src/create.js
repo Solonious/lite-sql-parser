@@ -1,4 +1,3 @@
-
 import { indexDefinitionToSQL } from './index-definition'
 import { columnDefinitionToSQL } from './column'
 import { constraintDefinitionToSQL } from './constrain'
