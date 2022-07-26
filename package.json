@@ -1,6 +1,6 @@
 {
   "name": "lite-ui-sql-parser",
-  "version": "1.8.29",
+  "version": "1.8.31",
   "description": "simple node sql parser",
   "main": "index.js",
   "types": "index.d.ts",
